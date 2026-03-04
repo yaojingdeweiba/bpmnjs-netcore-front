@@ -51,8 +51,8 @@ const InstanceList: React.FC = () => {
       hideInSearch: true,
     },
     {
-      title: '业务Key',
-      dataIndex: 'businessKey',
+      title: '版本标签',
+      dataIndex: 'tags',
       width: 150,
     },
     {
@@ -87,7 +87,7 @@ const InstanceList: React.FC = () => {
     },
     {
       title: '完成时间',
-      dataIndex: 'completionTime',
+      dataIndex: 'completedAt',
       width: 180,
       valueType: 'dateTime',
       hideInSearch: true,

@@ -10,6 +10,7 @@ import {
   getInstanceState,
 } from '@/services/workflow/instance';
 import { getWorkflowDefinition } from '@/services/workflow/definition';
+import dayjs from 'dayjs';
 
 const EXCLUDED_ELEMENT_ID_PATTERN = /^(StartEvent|EndEvent|.*Gateway)_?/i;
 
@@ -133,11 +134,11 @@ const Monitor: React.FC = () => {
     >
       <Card title="实例信息" style={{ marginBottom: 16 }}>
         <Descriptions column={2}>
-          <Descriptions.Item label="实例ID">{instance?.id}</Descriptions.Item>
+          <Descriptions.Item label="Instance Id">{instance?.id}</Descriptions.Item>
           {/* <Descriptions.Item label="业务Key">
             {instance?.businessKey || '-'}
           </Descriptions.Item> */}
-          <Descriptions.Item label="流程Key">{instance?.definitionKey}</Descriptions.Item>
+          <Descriptions.Item label="Definition Key">{instance?.definitionKey}</Descriptions.Item>
           <Descriptions.Item label="状态">
             <Tag color={getStatusColor(instance?.status || '')}>
               {instance?.status}
@@ -148,13 +149,13 @@ const Monitor: React.FC = () => {
               ? highlightedElementIds.join(', ')
               : '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="开始时间">
-            {instance?.creationTime}
+          <Descriptions.Item label="开始时间" >
+            {instance?.creationTime ? dayjs(instance.creationTime).format('YYYY-MM-DD HH:mm:ss') : '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="完成时间" span={2}>
-            {instance?.completionTime || '-'}
+          <Descriptions.Item label="完成时间"  span={2}>
+            {instance?.completedAt ? dayjs(instance.completedAt).format('YYYY-MM-DD HH:mm:ss') : '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="ServiceTask 状态" span={2}>
+          {/* <Descriptions.Item label="ServiceTask 状态" span={2}>
             {serviceTaskStates.length > 0 ? (
               serviceTaskStates.map((item) => (
                 <Tag key={`${item.elementId}-${item.executionId || ''}`} color={getStateTagColor(item.state)}>
@@ -166,7 +167,7 @@ const Monitor: React.FC = () => {
             ) : (
               '-'
             )}
-          </Descriptions.Item>
+          </Descriptions.Item> */}
         </Descriptions>
       </Card>
 

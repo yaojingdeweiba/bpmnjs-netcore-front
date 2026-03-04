@@ -19,18 +19,28 @@ const Designer: React.FC = () => {
   const [currentXml, setCurrentXml] = useState<string>();
   const [isEditMode, setIsEditMode] = useState(false);
   const [isReadOnlyPublished, setIsReadOnlyPublished] = useState(false);
+  const skipLoadRef = useRef(false); // 用于跳过首次保存后的重新加载
 
   useEffect(() => {
     if (id) {
+      console.log('🎯 检测到 ID 变化:', id, '是否跳过加载:', skipLoadRef.current);
       setIsEditMode(true);
+      // 如果是首次保存后跳转，跳过加载
+      if (skipLoadRef.current) {
+        console.log('⏭️ 跳过草稿加载（首次保存后跳转）');
+        skipLoadRef.current = false;
+        return;
+      }
       loadDefinition(id);
     }
   }, [id]);
 
   const loadDefinition = async (definitionId: string) => {
+    console.log('📂 开始加载草稿，ID:', definitionId);
     setLoading(true);
     try {
       const draft = await getWorkflowDraft(definitionId);
+      console.log('✅ 草稿加载成功，XML 长度:', draft.bpmnXml?.length || 0);
       setCurrentXml(draft.bpmnXml);
     } catch (error: any) {
       try {
@@ -63,6 +73,11 @@ const Designer: React.FC = () => {
     setLoading(true);
     try {
       const xml = await modelerRef.current.getXML();
+      console.log('💾 准备保存，XML 长度:', xml?.length || 0);
+
+      // 立即更新 currentXml，避免后续操作触发不必要的重新导入
+      setCurrentXml(xml);
+      console.log('✅ currentXml 已更新');
 
       // 解析 BPMN
       const parser = new BpmnParser();
@@ -113,10 +128,16 @@ console.log('找到的 process 元素:', processElement);
           processJson: JSON.stringify(processDefinition),
           category: category,
           tags: versionTag,
+          draftId: id,
       });
 
+      console.log('✅ 保存成功，savedDraft:', savedDraft);
       message.success('草稿保存成功');
       if (!id && savedDraft?.id) {
+        // 首次保存后跳转，设置标志跳过重新加载
+        console.log('🔀 首次保存，准备跳转到:', `/workflow/designer/${savedDraft.id}`);
+        setIsEditMode(true);
+        skipLoadRef.current = true;
         history.replace(`/workflow/designer/${savedDraft.id}`);
       }
     } catch (error: any) {
@@ -136,7 +157,6 @@ console.log('找到的 process 元素:', processElement);
       message.warning('已发布版本不允许重复发布，请操作草稿版本');
       return;
     }
-
     if (!id) {
       message.warning('请先保存流程定义后再发布');
       return;
@@ -149,7 +169,6 @@ console.log('找到的 process 元素:', processElement);
     try {
       // 先保存当前修改
       await handleSave();
-      
       // 再发布
       await publishWorkflowDraft(id);
       message.success('发布成功！流程定义已激活，可以创建流程实例');

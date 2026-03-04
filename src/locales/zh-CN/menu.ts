@@ -62,4 +62,5 @@ export default {
   'menu.task.task-history': '任务历史',
   'menu.workflow.viewer': '流程查看器',
   'menu.workflow.test-parser': '测试解析器',
+  'menu.workflow.draftviewer': '草稿查看器',
 };

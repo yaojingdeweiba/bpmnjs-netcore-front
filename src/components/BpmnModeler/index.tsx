@@ -57,22 +57,26 @@ const BpmnModelerComponent = forwardRef<BpmnModelerRef, BpmnModelerProps>(
     // 安全的导入函数
     const safeImportXML = async (xmlToImport: string) => {
       if (!modelerRef.current || isImportingRef.current) {
+        console.log('⏭️ 跳过导入：modeler未就绪或正在导入中');
         return;
       }
 
       // 如果XML相同，跳过导入
       if (xmlToImport === lastImportedXmlRef.current) {
+        console.log('⏭️ 跳过导入：XML内容相同');
         return;
       }
 
+      console.log('📥 开始导入 XML，长度:', xmlToImport?.length || 0);
       isImportingRef.current = true;
       try {
         await modelerRef.current.importXML(xmlToImport);
         const canvas = modelerRef.current.get('canvas') as any;
         canvas.zoom('fit-viewport');
         lastImportedXmlRef.current = xmlToImport;
+        console.log('✅ XML 导入成功');
       } catch (err: any) {
-        console.error('导入 BPMN 失败:', err);
+        console.error('❌ 导入 BPMN 失败:', err);
       } finally {
         isImportingRef.current = false;
       }
@@ -127,12 +131,8 @@ const BpmnModelerComponent = forwardRef<BpmnModelerRef, BpmnModelerProps>(
     // 当外部 XML 变化时重新导入
     useEffect(() => {
       if (xml && modelerRef.current) {
-        // 使用 setTimeout 确保不与初始化冲突
-        const timer = setTimeout(() => {
-          safeImportXML(xml);
-        }, 100);
-        
-        return () => clearTimeout(timer);
+        console.log('🔄 检测到外部 XML 更新，长度:', xml?.length || 0);
+        safeImportXML(xml);
       }
     }, [xml]);
 

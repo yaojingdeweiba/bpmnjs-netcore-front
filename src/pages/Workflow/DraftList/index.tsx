@@ -86,7 +86,7 @@ const DraftList: React.FC = () => {
           type="link"
           size="small"
           icon={<EyeOutlined />}
-          onClick={() => history.push(`/workflow/viewer/${record.id}`)}
+          onClick={() => history.push(`/workflow/draft-viewer/${record.id}`)}
         >
           查看
         </Button>,

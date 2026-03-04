@@ -54,6 +54,7 @@ declare namespace API {
     bpmnXml: string;
     processJson: string;
     tags?: string;
+    draftId?: string;
   }
 
   export interface UpdateWorkflowDefinitionDto {
@@ -78,8 +79,9 @@ declare namespace API {
     currentElementId?: string;
     variables: Record<string, any>;
     creationTime: string;
-    completionTime?: string;
+    completedAt?: string;
     creatorId?: string;
+    tags?: string;
   }
 
   export type WorkflowElementStateStatus =

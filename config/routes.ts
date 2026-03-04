@@ -86,11 +86,18 @@ export default [
         component: './Workflow/Designer',
         hideInMenu: true,
       },
-           {
+      {
         name: 'viewer',
         icon: 'eye',
         path: '/workflow/viewer/:id',
         component: './Workflow/Viewer',
+        hideInMenu: true,
+      },
+      {
+        name: 'draftviewer',
+        icon: 'eye',
+        path: '/workflow/draft-viewer/:id',
+        component: './Workflow/DraftView',
         hideInMenu: true,
       },
       {
